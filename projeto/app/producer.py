@@ -3,16 +3,29 @@
 import datetime
 import pika
 import json
+import os
+
+rabbitmq_host = os.environ['RABBIT_SVC_SERVICE_HOST']
+redis_host = os.environ['REDIS_SVC_SERVICE_HOST']
+redis_port = os.environ['REDIS_SVC_SERVICE_PORT']
+minio_host = os.environ['MINIO_SVC_SERVICE_HOST']
+#minio_port = os.environ['MINIO_SVC_SERVICE_PORT']
+#minio_endpoint = minio_host+":"+minio_port
+minio_endpoint = minio_host+":"+'9000'
+
+print("conectando no rabbimq...")
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host = "rabbit",
-    port = 5672,
-    virtual_host = "/"
+    host = rabbitmq_host
 ))
 
 channel = connection.channel()
 
+print("abrindo arquivo de transcações...")
+
 transaction_file = open("transaction.json")
+
+print("carregando transações...")
 
 transactions = json.load(transaction_file)
 
@@ -32,12 +45,15 @@ import redis
 import io
 import os
 
-SERVER = os.getenv("SERVER_NAME")
+print("conectando no minio...")
+
 cliente = Minio(
-    endpoint=f"{SERVER}:9000",
+    endpoint=minio_endpoint,
     access_key="minioadmin", 
     secret_key="minioadmin",
     secure=False)
+
+print("criando bucket se não existir...")
 
 bucket_name = "bucket"
 if cliente.bucket_exists(bucket_name):
@@ -45,7 +61,11 @@ if cliente.bucket_exists(bucket_name):
 else:
     cliente.make_bucket(bucket_name)
 
-cache = redis.Redis(host='redis', port=6379, db=0)
+print("conectando ao redis...")
+
+cache = redis.Redis(host=redis_host, port=redis_port, db=0)
+
+print("pesquisando por chave..")
 
 chaves = cache.keys("report*")
 
@@ -69,6 +89,8 @@ for chave in chaves:
         data=str_reports,
         length=size
     )
+
+    print("mostrando o endereço dos relatorios...")
 
     get_url = cliente.get_presigned_url(
         method='GET',

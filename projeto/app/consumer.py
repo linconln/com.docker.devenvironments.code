@@ -3,23 +3,30 @@ import json
 import redis
 import os
 
-rabbitmq_host = os.environ['RABBITMQ_HOST']
-print(rabbitmq_host)
+rabbitmq_host = os.environ['RABBIT_SVC_SERVICE_HOST']
+redis_host = os.environ['REDIS_SVC_SERVICE_HOST']
+redis_port = os.environ['REDIS_SVC_SERVICE_PORT']
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host = rabbitmq_host,
-    port = 5672,
-    virtual_host = "/"
-))
+print("rabbitmq_host=", rabbitmq_host, "redis_host=", redis_host)
+
+print("conectando ao rabbitmq")
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(host = rabbitmq_host))
+
+print("conectando ao canal")
 
 channel = connection.channel()
+
+print("criando fila")
 
 queue_name = "fraud_validator_queue"
 
 channel.queue_declare(queue="fraud_validator_queue")
 channel.queue_bind(exchange="amq.fanout", queue="fraud_validator_queue")
 
-cache = redis.Redis(host='redis', port=6379, db=0)
+print("conectando ao redis")
+
+cache = redis.Redis(host=redis_host, port=redis_port, db=0)
 
 def chamado_quando_uma_transacao_eh_consumida(channel, method_frame, header_frame, body):
     transaction = json.loads(body.decode('utf-8'))

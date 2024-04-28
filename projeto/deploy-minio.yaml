@@ -18,6 +18,10 @@ spec:
       containers:
       - image: quay.io/minio/minio
         name: minio-svc
+        ports:
+          - containerPort: 9000
+          - containerPort: 9001
+          - containerPort: 9090
         command:
         - /bin/bash
         - -c
@@ -26,7 +30,7 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: minio-vol
-            #            resources: {}
+        resources: {}
       volumes:
       - name: minio-vol
         hostPath: # MinIO generally recommends using locally-attached volumes
