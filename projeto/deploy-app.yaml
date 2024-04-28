@@ -10,7 +10,17 @@ spec:
     port: 6000
     targetPort: 5000
   type: LoadBalancer
-
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-ferramentas
+data:
+  RABBITMQ_HOST: rabbitmq
+  REDIS_HOST: redis
+  REDIS_PORT: '6379'
+  MINIO_ENDPOINT: minio:9000
+  MINIO_ROOT_USER: guest
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -28,7 +38,8 @@ spec:
     spec:
       containers:
       - name: consumer
-        image: linconln/consumer:v1
+        image: linconln/consumer:2
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
+

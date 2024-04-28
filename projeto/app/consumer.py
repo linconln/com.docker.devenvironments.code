@@ -3,12 +3,11 @@ import json
 import redis
 import os
 
-RABBITMQ_HOST = os.environ["RABBITMQ_HOST"]
-print(RABBITMQ_HOST)
+rabbitmq_host = os.environ['RABBITMQ_HOST']
+print(rabbitmq_host)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-#    host = "localhost",
-    host = RABBITMQ_HOST,
+    host = rabbitmq_host,
     port = 5672,
     virtual_host = "/"
 ))
