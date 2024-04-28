@@ -19,10 +19,10 @@ channel = connection.channel()
 
 print("criando fila")
 
-queue_name = "fraud_validator_queue"
+queue_name = "fraude_queue"
 
-channel.queue_declare(queue="fraud_validator_queue")
-channel.queue_bind(exchange="amq.fanout", queue="fraud_validator_queue")
+channel.queue_declare(queue="fraude_queue")
+channel.queue_bind(exchange="amq.fanout", queue="fraude_queue")
 
 print("conectando ao redis")
 
