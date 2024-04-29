@@ -25,6 +25,10 @@ spec:
       labels:
         app: consumer
     spec:
+      initContainers:
+        - name: sleep
+          image: busybox:1.28
+          command: ["sleep", "30"]
       containers:
       - name: consumer
         image: linconln/consumer:1
@@ -32,4 +36,7 @@ spec:
         ports:
         - containerPort: 5000
           name: web
-
+        command:
+        - python
+        args:
+        - producer.py
