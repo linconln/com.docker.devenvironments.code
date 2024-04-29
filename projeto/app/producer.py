@@ -5,13 +5,13 @@ import pika
 import json
 import os
 
-rabbitmq_host = os.environ['RABBIT_SVC_SERVICE_HOST']
-redis_host = os.environ['REDIS_SVC_SERVICE_HOST']
+rabbitmq_host = 'rabbit-svc'
+redis_host = 'redis-svc'
 redis_port = os.environ['REDIS_SVC_SERVICE_PORT']
-minio_host = os.environ['MINIO_SVC_SERVICE_HOST']
-#minio_port = os.environ['MINIO_SVC_SERVICE_PORT']
-#minio_endpoint = minio_host+":"+minio_port
-minio_endpoint = minio_host+":"+'9000'
+minio_host = 'minio-svc'
+#minio_host = os.environ['MINIO_HOST']
+minio_port = os.environ['MINIO_SVC_SERVICE_PORT']
+minio_endpoint = minio_host+":"+minio_port
 
 print("conectando no rabbimq...")
 
@@ -55,7 +55,7 @@ cliente = Minio(
 
 print("criando bucket se não existir...")
 
-bucket_name = "bucket"
+bucket_name = "relatorios"
 if cliente.bucket_exists(bucket_name):
     print("Bucket existe!")
 else:
@@ -92,9 +92,9 @@ for chave in chaves:
 
     print("mostrando o endereço dos relatorios...")
 
-    get_url = cliente.get_presigned_url(
-        method='GET',
-        bucket_name=bucket_name,
-        object_name= str_chave, )
-
-    print(f"Download URL: [GET] {get_url}")
+#    get_url = cliente.get_presigned_url(
+#        method='GET',
+#        bucket_name=bucket_name,
+#        object_name= str_chave, )
+    get_url = cliente.presigned_get_object(bucket_name, str_chave, expires=datetime.timedelta(days=1), response_headers=None, request_date=None, version_id=None, extra_query_params=None)
+    print(f"Download URL: {get_url}")

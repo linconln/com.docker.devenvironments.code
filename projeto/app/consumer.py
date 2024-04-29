@@ -3,8 +3,8 @@ import json
 import redis
 import os
 
-rabbitmq_host = os.environ['RABBIT_SVC_SERVICE_HOST']
-redis_host = os.environ['REDIS_SVC_SERVICE_HOST']
+rabbitmq_host = 'rabbit-svc'
+redis_host = 'redis-svc'
 redis_port = os.environ['REDIS_SVC_SERVICE_PORT']
 
 print("rabbitmq_host=", rabbitmq_host, "redis_host=", redis_host)

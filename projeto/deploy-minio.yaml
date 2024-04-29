@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: minio
-  name: minio-svc
+  name: minio
 spec:
   replicas: 1
   selector:
@@ -17,11 +17,12 @@ spec:
     spec:
       containers:
       - image: quay.io/minio/minio
-        name: minio-svc
+        name: minio
         ports:
           - containerPort: 9000
+            name: api
           - containerPort: 9001
-          - containerPort: 9090
+            name: web
         command:
         - /bin/bash
         - -c
